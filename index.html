@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Form with Shuffled Fields</title>
+    <title>Dynamic Form with Shuffled Required Fields</title>
     <style>
         .form-container {
             margin: 20px;
@@ -25,21 +25,21 @@
 <body>
 
 <div class="form-container">
-    <h2>Dynamic Form with Shuffled Fields</h2>
+    <h2>Dynamic Form with Shuffled Required Fields</h2>
     <form id="dynamicForm">
         <label id="label1">Field 1 *</label>
         <input type="text" id="field1" name="field1"><br>
 
-        <label id="label2">Field 2</label>
+        <label id="label2">Field 2 *</label>
         <input type="text" id="field2" name="field2"><br>
 
-        <label id="label3">Field 3 *</label>
+        <label id="label3">Field 3</label>
         <input type="text" id="field3" name="field3"><br>
 
-        <label id="label4">Field 4</label>
+        <label id="label4">Field 4 *</label>
         <input type="text" id="field4" name="field4"><br>
 
-        <label id="label5">Field 5 *</label>
+        <label id="label5">Field 5</label>
         <input type="text" id="field5" name="field5"><br>
 
         <button type="submit">Submit</button>
@@ -48,37 +48,25 @@
 </div>
 
 <script>
-    
-    function shuffleFields() {
+    // Функция для перемешивания обязательных полей
+    function shuffleRequiredFields() {
         let form = document.getElementById('dynamicForm');
-        let fields = Array.from(form.getElementsByTagName('input'));
-        let labels = Array.from(form.getElementsByTagName('label'));
-
+        let requiredFields = Array.from(form.querySelectorAll('input[required]'));
         
-        fields.sort(() => Math.random() - 0.5);
+        // Перемешиваем обязательные поля
+        requiredFields.sort(() => Math.random() - 0.5);
 
-        
-        fields.forEach((field, index) => {
-            form.appendChild(field);
-            form.appendChild(labels[index]); 
-        });
-
-        
-        fields.forEach(field => {
-            let label = document.querySelector(`label[for="${field.id}"]`);
-            if (Math.random() > 0.5) {
-                label.textContent = label.textContent.replace('*', '');
-                field.required = false;
-            } else {
-                label.textContent += ' *';
-                field.required = true;
-            }
+        // Устанавливаем случайный порядок полей на форме
+        requiredFields.forEach((field, index) => {
+            let label = form.querySelector(`label[for="${field.id}"]`);
+            form.insertBefore(label, form.children[index * 2]); // Перемещаем label перед соответствующим полем
+            form.insertBefore(field, form.children[index * 2 + 1]); // Перемещаем поле после label
         });
     }
 
-    
+    // Вызываем функцию shuffleRequiredFields() при загрузке страницы
     window.onload = function() {
-        shuffleFields();
+        shuffleRequiredFields();
     };
 
     // Обработчик события submit для формы
