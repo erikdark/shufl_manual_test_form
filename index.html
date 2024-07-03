@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Form with Shuffled Fields</title>
+    <style>
+        .form-container {
+            margin: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            margin-bottom: 10px;
+            width: 200px;
+        }
+        .error {
+            color: red;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Dynamic Form with Shuffled Fields</h2>
+    <form id="dynamicForm">
+        <label id="label1">Field 1 *</label>
+        <input type="text" id="field1" name="field1"><br>
+
+        <label id="label2">Field 2</label>
+        <input type="text" id="field2" name="field2"><br>
+
+        <label id="label3">Field 3 *</label>
+        <input type="text" id="field3" name="field3"><br>
+
+        <label id="label4">Field 4</label>
+        <input type="text" id="field4" name="field4"><br>
+
+        <label id="label5">Field 5 *</label>
+        <input type="text" id="field5" name="field5"><br>
+
+        <button type="submit">Submit</button>
+    </form>
+    <p id="message" class="error"></p>
+</div>
+
+<script>
+    
+    function shuffleFields() {
+        let form = document.getElementById('dynamicForm');
+        let fields = Array.from(form.getElementsByTagName('input'));
+        let labels = Array.from(form.getElementsByTagName('label'));
+
+        
+        fields.sort(() => Math.random() - 0.5);
+
+        
+        fields.forEach((field, index) => {
+            form.appendChild(field);
+            form.appendChild(labels[index]); 
+        });
+
+        
+        fields.forEach(field => {
+            let label = document.querySelector(`label[for="${field.id}"]`);
+            if (Math.random() > 0.5) {
+                label.textContent = label.textContent.replace('*', '');
+                field.required = false;
+            } else {
+                label.textContent += ' *';
+                field.required = true;
+            }
+        });
+    }
+
+    
+    window.onload = function() {
+        shuffleFields();
+    };
+
+    // Обработчик события submit для формы
+    document.getElementById('dynamicForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        let form = event.target;
+        let isValid = form.checkValidity();
+        let message = document.getElementById('message');
+
+        if (isValid) {
+            message.textContent = 'Data sent successfully';
+        } else {
+            message.textContent = 'Please fill in all required fields marked with *';
+        }
+    });
+</script>
+
+</body>
+</html>
